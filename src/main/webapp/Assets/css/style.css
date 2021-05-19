@@ -1,0 +1,133 @@
+body{
+    overflow-y: scroll;
+}
+
+body > .container{
+    min-height: 80%;
+}
+
+.blankslate .icon img{
+    max-width: 50px;
+    height: auto;
+    opacity: 0.6;
+    margin-top: 100px;
+}
+
+.alert-pre-space{
+    margin-top: 30px;
+    margin-bottom: 0;
+}
+
+.modal-header .close{
+    background: none;
+    border: 0;
+    float: right;
+    font-size: 30px;
+    margin-top: -10px;
+    color: #f5f5f5;
+    text-decoration: none;
+}
+
+.btn [class^="kpl-"],.btn [class*=" kpl-"]{
+    line-height: 1.42857143;
+    font-size: 13px;
+}
+
+code{
+    white-space:pre;
+    display:block;
+    unicode-bidi:embed;
+    padding: 10px;
+}
+.top-spacing{
+    margin-top: 30px;
+}
+select[multiple]{
+    background: #fff!important;
+}
+
+.alert{
+    margin-bottom: 30px;
+}
+
+/*breadcrumbs*/
+#breadcrumb ul {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+#breadcrumb :first-child{
+    margin-left: 0;
+}
+
+#breadcrumb li {
+    float: left;
+    margin: 0 10px;
+}
+
+#breadcrumb a {
+    background: #f5f5f5;
+    padding: 0.5em 0.8em;
+    float: left;
+    text-decoration: none;
+    color: #333;
+    position: relative;
+}
+
+#breadcrumb li:first-child a {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+#breadcrumb li:last-child a {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+#breadcrumb a:hover {
+    background: #428bca;
+    color: #fff;
+}
+
+#breadcrumb li:not(:first-child) > a::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    margin-top: -1.5em;   
+    border-width: 1.5em 0 1.5em 1em;
+    border-style: solid;
+    border-color: #f5f5f5 #f5f5f5 #f5f5f5 transparent;
+    left: -1em;
+}
+
+#breadcrumb li:not(:first-child) > a:hover::before {
+    border-color: #428bca #428bca #428bca transparent;
+}
+
+#breadcrumb li:not(:last-child) > a::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    margin-top: -1.5em;   
+    border-top: 1.5em solid transparent;
+    border-bottom: 1.5em solid transparent;
+    border-left: 1em solid #f5f5f5;
+    right: -1em;
+}
+
+#breadcrumb li:not(:last-child) > a:hover::after {
+    border-left-color: #428bca;
+}
+.head-heading a {
+    font-size: 29px !important;
+    color:white;
+
+}
+
+.card-stats .card-header .card-category {
+    font-size: 20px !important;
+}

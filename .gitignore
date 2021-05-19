@@ -1,0 +1,8 @@
+# Ignore Files and folder
+Library_Management.iml
+nb-configuration.xml
+.DS_Store
+Thumbs.db
+.idea
+.settings
+target

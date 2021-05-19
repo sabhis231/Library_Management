@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+  <persistence-unit name="default">
+    <class>com.sabhis.Library_Management.models.AuthorDetails</class>
+    <class>com.sabhis.Library_Management.models.BookDetails</class>
+    <class>com.sabhis.Library_Management.models.BookLoanStatus</class>
+    <class>com.sabhis.Library_Management.models.CmnUserDetails</class>
+    <class>com.sabhis.Library_Management.models.MasterLoanStatus</class>
+    <class>com.sabhis.Library_Management.models.MasterRole</class>
+    <class>com.sabhis.Library_Management.models.MasterStatus</class>
+    <class>com.sabhis.Library_Management.models.PublisherDetails</class>
+    <class>com.sabhis.Library_Management.models.MasterRoles</class>
+    <properties>
+      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/library_management"/>
+      <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
+    </properties>
+  </persistence-unit>
+</persistence>
