@@ -42,13 +42,13 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Name</label>
-                                                    <input type="text" class="form-control" id="name" name="name">
+                                                    <input type="text" class="form-control" id="name" name="name" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Email address</label>
-                                                    <input type="email" class="form-control" id="emailId" name="emailId">
+                                                    <input type="email" class="form-control" id="emailId" name="emailId" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -56,13 +56,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Date of Birth</label>
-                                                    <input type="date" class="form-control" id="dob" name="dob">
+                                                    <input type="date" class="form-control" id="dob" name="dob" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Gender</label>
-                                                    <select class="form-control" id="gender" name="gender">
+                                                    <select class="form-control" id="gender" name="gender" required>
                                                         <option selected disabled>Select Gender</option>
                                                         <option value="Male">Male</option>
                                                         <option value="FeMale">FeMale</option>
@@ -76,19 +76,19 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">City</label>
-                                                    <input type="text" class="form-control" id="city" name="city">
+                                                    <input type="text" class="form-control" id="city" name="city" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Country</label>
-                                                    <input type="text" class="form-control" id="country" name="country">
+                                                    <input type="text" class="form-control" id="country" name="country" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Zip Code</label>
-                                                    <input type="text" class="form-control" id="zipCode" name="zipCode">
+                                                    <input type="text" class="form-control" id="zipCode" name="zipCode" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -100,7 +100,7 @@
                                                         <!--                                                        <label class="bmd-label-floating"> 
                                                                                                                     Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.\
                                                                                                                 </label>-->
-                                                        <textarea class="form-control" rows="5" id="about" name="about"></textarea>
+                                                        <textarea class="form-control" rows="5" id="about" name="about" required></textarea>
                                                     </div>
                                                 </div>
                                             </div>

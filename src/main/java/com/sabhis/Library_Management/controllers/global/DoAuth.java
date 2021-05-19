@@ -1,4 +1,4 @@
-package com.sabhis.Library_Management.controllers.user;
+package com.sabhis.Library_Management.controllers.global;
 
 import com.sabhis.Library_Management.models.CmnUserDetails;
 import com.sabhis.Library_Management.services.DBServices;

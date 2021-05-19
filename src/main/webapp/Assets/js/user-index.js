@@ -134,7 +134,9 @@ var renderData = function (bookArray, message, operationId, errorMessage, elemen
         }
 
     } else {
+        var counter = 0;
         for (var a of bookArray) {
+            counter++;
             data += "<tr>"
             data += "<td>" + a.bookName + "</td>"
             if (operationId == 3) {
@@ -142,7 +144,7 @@ var renderData = function (bookArray, message, operationId, errorMessage, elemen
                 data += "<td>" + transformYear(a.publishedYear) + "</td>"
 
                 data += "<td>" + a.totalPages + "</td>"
-                
+
                 data += '<td class="td-actions text-center">';
                 data += '<button type="button" class="btn btn-sm book-operation btn-primary" data-bookId="' + a.bookId + '" data-operationId="' + operationId + '" data-toggle="tooltip" data-placement="top" title="' + message + '">'
                 data += 'borrow'
@@ -170,6 +172,8 @@ var renderData = function (bookArray, message, operationId, errorMessage, elemen
                 data += '</td>'
             }
             data += "</tr>"
+            if (counter == 5)
+                break;
         }
     }
     $("#" + elementId).html(data);

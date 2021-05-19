@@ -126,6 +126,7 @@ $(function () {
 
 var renderData = function (bookArray, errorMessage, elementId, typeId) {
     var data = "";
+    var counter = 0;
 
     if (typeId == 1) {
         data += '<thead class="text-warning">';
@@ -145,6 +146,7 @@ var renderData = function (bookArray, errorMessage, elementId, typeId) {
             data += '</tr>';
         } else {
             for (var a of bookArray) {
+                counter++;
                 data += "<tr>"
                 data += "<td>" + a.bookName + "</td>"
                 data += "<td>" + a.publishedBy + "</td>"
@@ -172,6 +174,8 @@ var renderData = function (bookArray, errorMessage, elementId, typeId) {
                 data += '<a class="btn btn-primary book-operation" data-toggle="modal" data-target="#showandedit" data-bookId="' + a.bookId + '">Show and Edit </a>';
                 data += '</td>';
                 data += '</tr>';
+                if (counter == 5)
+                    break;
             }
         }
 
@@ -193,6 +197,7 @@ var renderData = function (bookArray, errorMessage, elementId, typeId) {
             data += '</tr>';
         } else {
             for (var a of bookArray) {
+                counter++;
                 data += "<tr>"
                 data += "<td>" + a.bookName + "</td>";
                 data += "<td>" + a.userName + "</td>";
@@ -201,14 +206,16 @@ var renderData = function (bookArray, errorMessage, elementId, typeId) {
                 data += "<td>" + trasformDate(a.borrowedOn) + "</td>";
 
                 data += '</tr>';
+                if (counter == 5)
+                    break;
             }
         }
     } else if (typeId == 3) {
         data += '<thead class="text-warning">';
         data += '<th>Book Name</th>';
         data += '<th>User Name</th>';
-        data += '<th>Email Id</th>';
-        data += '<th>Published On</th>';
+//        data += '<th>Email Id</th>';
+//        data += '<th>Published On</th>';
         data += '<th>Requested On </th>';
         data += '<th>Approve</th>';
         data += '</thead>';
@@ -217,20 +224,23 @@ var renderData = function (bookArray, errorMessage, elementId, typeId) {
 
         if (bookArray.length == 0) {
             data += "<tr>"
-            data += "<td colspan='6' class='text-center'>" + errorMessage + "</td>";
+            data += "<td colspan='4' class='text-center'>" + errorMessage + "</td>";
             data += '</tr>';
         } else {
             for (var a of bookArray) {
+                counter++;
                 data += "<tr>"
                 data += "<td>" + a.bookName + "</td>";
                 data += "<td>" + a.userName + "</td>";
-                data += "<td>" + a.userId + "</td>";
-                data += "<td>" + transformYear(a.publishedYear) + "</td>";
+//                data += "<td>" + a.emailId + "</td>";
+//                data += "<td>" + transformYear(a.publishedYear) + "</td>";
                 data += "<td>" + trasformDate(a.requestedOn) + "</td>";
                 data += '<td class="td-actions">';
                 data += '  <a class="btn btn-primary approve-book" data-userId="' + a.userId + '" data-bookId="' + a.bookId + '">Approve</a>';
                 data += '</td>';
                 data += '</tr>';
+                if (counter == 5)
+                    break;
             }
         }
     }

@@ -16,10 +16,16 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--===============================================================================================-->	
+        <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
         <title>Library Management</title>
         <%@include file="include.jsp" %>
     </head>
     <body draggable="false"
-          ondragover="" >
+          ondragoxsver="" >
+
+        
+   
 
 

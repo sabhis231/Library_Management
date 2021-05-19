@@ -25,7 +25,15 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
+                            <div class="input-group no-border ">
+
+                            </div>
+
+                        </div>
+                        <div class="col-lg-12 col-md-12">
+
                             <button type="button" class="btn btn-primary pull-right add-book" data-toggle="modal" data-target="#showandedit">Add Book</button>
+
                         </div>
                     </div>
                     <div class="row">
@@ -82,7 +90,7 @@
                                     <div class="col-md-5">
                                         <div class="form-group">
                                             <label class="bmd-label-floating">Book Title</label>
-                                            <input type="text" class="form-control" id="booktitle" name="booktitle">
+                                            <input type="text" class="form-control" id="booktitle" name="booktitle" required>
                                         </div>
                                     </div>
                                 </div>
@@ -90,8 +98,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="bmd-label-floating">Author</label>
-                                            <select class="form-control" id="authorList" name="authorList">
-                                                <option selected disabled>Select Author</option>
+                                            <select class="form-control" id="authorList" name="authorList" required>
+                                                <option disabled>Select Author</option>
 
                                             </select>
 
@@ -100,8 +108,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="bmd-label-floating">Publisher</label>
-                                            <select class="form-control" id="publisherList" name="publisherList">
-                                                <option selected disabled>Select Publisher</option>
+                                            <select class="form-control" id="publisherList" name="publisherList" required>
+                                                <option disabled>Select Publisher</option>
 
                                             </select>
 
@@ -112,13 +120,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="bmd-label-floating">Published On </label>
-                                            <input type="date" class="form-control" id="publishedYear" name="publishedYear">
+                                            <input type="date" class="form-control" id="publishedYear" name="publishedYear" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="bmd-label-floating">Total Pages</label>
-                                            <input type="text" class="form-control" id="totalPages" name="totalPages">
+                                            <input type="text" class="form-control" id="totalPages" name="totalPages" required>
                                         </div>
                                     </div>
 
@@ -128,7 +136,7 @@
                                         <div class="form-group">
                                             <label>About</label>
                                             <div class="form-group">
-                                                <textarea class="form-control" rows="5" id="description" name="description"></textarea>
+                                                <textarea class="form-control" rows="5" id="description" name="description" required></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -169,7 +177,7 @@
                                 </div>
                                 <div class="card-body table-responsive">
                                     <table class="table table-hover" id="user-List">
-                                       
+
                                     </table>
                                 </div>
                             </div>

@@ -92,7 +92,7 @@
                 </div>
             </div>
         </c:if>
-        <c:if test="${sessionScope.Role=='ta'}">
+        <c:if test="${sessionScope.Role=='user'}">
             <div class="sidebar" 
                  data-color="purple" 
                  data-background-color="black" 

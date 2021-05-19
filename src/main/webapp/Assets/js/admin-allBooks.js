@@ -285,8 +285,8 @@ var renderData = function (bookArray) {
         for (var a of bookArray) {
             data += "<tr>";
             data += "<td>" + a.bookName + "</td>";
-            data += "<td>" + a.publishedBy + "</td>";
-            data += "<td>" + a.publishedYear + "</td>";
+            data += "<td>" + (((a.publishedBy.length) > 40) ? (a.publishedBy.substring(0,40)+"...") :  (a.publishedBy)) + "</td>";
+            data += "<td>" + transformYear(a.publishedYear) + "</td>";
             data += "<td>" + a.totalPages + "</td>";
             data += "<td>" + a.bookStatusName;
             if (a.bookStatusId == 1) {

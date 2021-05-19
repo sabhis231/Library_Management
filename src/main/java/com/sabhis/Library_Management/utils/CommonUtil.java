@@ -5,11 +5,11 @@
  */
 package com.sabhis.Library_Management.utils;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Scanner;
+import java.util.Properties;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -21,9 +21,6 @@ import javax.crypto.spec.SecretKeySpec;
  * @author sabhis231
  */
 public class CommonUtil {
-
-    public static final String AES = "AES";
-    public static final String key = "DB99A2A8EB6904F492E9DF0595ED683C";
 
     private static String byteArrayToHexString(byte[] b) {
         StringBuffer sb = new StringBuffer(b.length * 2);
@@ -48,13 +45,17 @@ public class CommonUtil {
     }
 
     public static String plainToHashPassword(String passwordPlain) {
+
         String password = null;
+
         try {
-            byte[] bytekey = hexStringToByteArray(CommonUtil.key);
+            String AES = new CommonUtil().getPropertySec("AES");
+            String key = new CommonUtil().getPropertySec("key");
+            byte[] bytekey = hexStringToByteArray(key);
 
-            SecretKeySpec sks = new SecretKeySpec(bytekey, CommonUtil.AES);
+            SecretKeySpec sks = new SecretKeySpec(bytekey, AES);
 
-            Cipher cipher = Cipher.getInstance(CommonUtil.AES);
+            Cipher cipher = Cipher.getInstance(AES);
             cipher.init(Cipher.ENCRYPT_MODE, sks, cipher.getParameters());
 
             byte[] encrypted = cipher.doFinal(passwordPlain.getBytes());
@@ -70,17 +71,37 @@ public class CommonUtil {
     public static String hashToPlainPassword(String hexPassword) {
         String hashPassword = null;
         try {
-            byte[] bytekey = hexStringToByteArray(CommonUtil.key);
-            SecretKeySpec sks = new SecretKeySpec(bytekey, CommonUtil.AES);
-            Cipher cipher = Cipher.getInstance(CommonUtil.AES);
+            String AES = new CommonUtil().getPropertySec("AES");
+            String key = new CommonUtil().getPropertySec("key");
+            byte[] bytekey = hexStringToByteArray(key);
+            SecretKeySpec sks = new SecretKeySpec(bytekey, AES);
+            Cipher cipher = Cipher.getInstance(AES);
             cipher.init(Cipher.DECRYPT_MODE, sks);
             byte[] decrypted = cipher.doFinal(hexStringToByteArray(hexPassword));
             hashPassword = new String(decrypted);
-        } catch (Exception ex) {
+        } catch (InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
             System.out.println(ex);
         } finally {
             return hashPassword;
         }
 
+    }
+
+    public String getPropertySec(String Property) {
+        String file = "config.properties";
+        Properties prop;
+        InputStream inputStream;
+
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream(file);
+            if (inputStream != null) {
+                prop = new Properties();
+                prop.load(inputStream);
+                return prop.getProperty(Property);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

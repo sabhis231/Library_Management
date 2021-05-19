@@ -22,15 +22,15 @@ import java.util.List;
 import org.hibernate.Transaction;
 
 public class DBServices {
-
+    
     public static Date updateDateObject(Date date, int days) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE, days); //minus number would decrement the days
         return cal.getTime();
-
+        
     }
-
+    
     public static CmnUserDetails doauth(CmnUserDetails cud) {
         CmnUserDetails returnCud = null;
         try {
@@ -51,16 +51,16 @@ public class DBServices {
             System.out.println(ex);
             return null;
         }
-
+        
         return returnCud;
     }
-
+    
     public static JSONObject fetchMappedBook(int userId) {
         JSONObject object = new JSONObject();
         try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             session.beginTransaction();
-            String hql = "SELECT c FROM BookLoanStatus c where c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0";
+            String hql = "SELECT c FROM BookLoanStatus c where c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("userId", new CmnUserDetails(userId));
             List<BookLoanStatus> listBls = query.list();
@@ -117,9 +117,9 @@ public class DBServices {
             object.put("totalBorrowedBook", countForBorrowedBook);
             object.put("totalRequestedBook", countForRequestedBook);
             object.put("totalReturnedBook", countForReturnBook);
-
+            
             object.put("responseCode", 1);
-
+            
             System.out.println(listBls);
         } catch (Exception ex) {
             System.out.println(ex);
@@ -127,14 +127,14 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchAllBooks(String searchKey) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
 //            Session session = HibernateUtil.getSessionFactory().openSession();
             session.beginTransaction();
-            String hql = "SELECT c FROM BookDetails c where c.isEnabled=1 and c.isDeleted=0 and c.bookTitle like :searchKey";
+            String hql = "SELECT c FROM BookDetails c where c.isEnabled=1 and c.isDeleted=0 and c.bookTitle like :searchKey order by c.modifiedOn desc";
             Query query = session.createQuery(hql);
             query.setParameter("searchKey", "%" + searchKey + "%");
             List<BookDetails> listBd = query.list();
@@ -156,9 +156,9 @@ public class DBServices {
                     query.setParameter("bookId", bd);
                     query.setParameter("loanStatusId", new MasterLoanStatus(1));
                     List<BookLoanStatus> listBls = query.list();
-
+                    
                     JSONObject jsonBls = new JSONObject();
-
+                    
                     if (!listBls.isEmpty()) {
                         BookLoanStatus bls = listBls.get(listBls.size() - 1);
                         jsonBls.put("userId", bls.getUserId().getUserId());
@@ -187,7 +187,7 @@ public class DBServices {
                         jsonBlsArray.add(jsonBls);
                     }
                     jsonObject.put("loanDetails", jsonBlsArray);
-
+                    
                 }
                 jsonObject.put("bookStatusId", bd.getStatusId().getStatusId());
                 jsonObject.put("bookStatusName", bd.getStatusId().getStatusName());
@@ -205,7 +205,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchRequestedBookByUserId(int userId) {
         JSONObject object = new JSONObject();
         try {
@@ -239,9 +239,9 @@ public class DBServices {
             object.put("totalBorrowedBookList", jsonBorrowedArray);
             object.put("totalBorrowedBook", countForBorrowedBook);
             object.put("totalReturnedBook", countForReturnBook);
-
+            
             object.put("responseCode", 1);
-
+            
             System.out.println(listBls);
         } catch (Exception ex) {
             System.out.println(ex);
@@ -249,7 +249,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchUserProfile(int userId) {
         JSONObject object = new JSONObject();
         try {
@@ -261,7 +261,7 @@ public class DBServices {
             CmnUserDetails cud = (CmnUserDetails) query.uniqueResult();
             session.close();
             JSONObject userObject = new JSONObject();
-
+            
             userObject.put("name", cud.getName());
             userObject.put("emailId", cud.getEmailId());
             userObject.put("about", cud.getAbout());
@@ -271,18 +271,18 @@ public class DBServices {
             userObject.put("dob", cud.getDateOfBirth() + "");
             userObject.put("gender", cud.getGender());
             userObject.put("imagePath", cud.getImagePath());
-
+            
             object.put("user", userObject);
             object.put("responseCode", 1);
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             object.put("responseCode", 0);
         }
-
+        
         return object;
     }
-
+    
     public static CmnUserDetails updateProfile(CmnUserDetails cud, int userId) {
         CmnUserDetails returnCud = null;
         try {
@@ -292,7 +292,7 @@ public class DBServices {
             Query query = session.createQuery(hql);
             query.setParameter("userId", userId);
             returnCud = (CmnUserDetails) query.uniqueResult();
-
+            
             returnCud.setEmailId(cud.getEmailId());
             returnCud.setName(cud.getName());
             returnCud.setCounty(cud.getCounty());
@@ -304,21 +304,21 @@ public class DBServices {
             session.update(returnCud);
             session.getTransaction().commit();
             session.close();
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             return null;
         }
-
+        
         return returnCud;
     }
-
+    
     public static int deactivateAccount(int userId) {
         int returnData = 0;
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
         try {
-
+            
             tx = session.beginTransaction();
             String hql = "SELECT c FROM BookLoanStatus c where c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 and c.loanStatusId=:loanStatusId";
             Query query = session.createQuery(hql);
@@ -332,12 +332,12 @@ public class DBServices {
                 query = session.createQuery(hql);
                 query.setParameter("userId", new CmnUserDetails(userId));
                 query.executeUpdate();
-
+                
                 hql = "UPDATE CmnUserDetails c SET c.isEnabled=0 WHERE userId=:userId";
                 query = session.createQuery(hql);
                 query.setParameter("userId", userId);
                 query.executeUpdate();
-
+                
                 returnData = 1;
                 tx.commit();
             }
@@ -347,14 +347,14 @@ public class DBServices {
             }
             System.out.println(ex);
             returnData = 3;
-
+            
         } finally {
             session.close();
         }
-
+        
         return returnData;
     }
-
+    
     public static JSONObject bookOperation(int userId, int bookId, int operation) {
         JSONObject object = new JSONObject();
         int returnData = 0;
@@ -381,14 +381,14 @@ public class DBServices {
             System.out.println(ex.getMessage());
             object.put("responseCode", 0);
             object.put("msg", "Some Error Occured. Please try after some time.");
-
+            
         } finally {
             session.close();
         }
-
+        
         return object;
     }
-
+    
     private static JSONObject returnBook(int userId, int bookId) {
         JSONObject object = new JSONObject();
         int returnData = 0;
@@ -407,19 +407,19 @@ public class DBServices {
 //                object.put("msg", "Book is not in loan!");
 //            } else {
             String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:statusId1 and c.bookId=:bookId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0  and c.isCanceled=:isCanceled ";
-
+            
             Query query = session.createQuery(hql);
             query.setParameter("statusId1", new MasterLoanStatus(1));
             query.setParameter("bookId", new BookDetails(bookId));
             query.setParameter("userId", new CmnUserDetails(userId));
             query.setParameter("isCanceled", false);
             List<BookLoanStatus> listBls = query.list();
-
+            
             if (listBls.isEmpty()) {
                 object.put("responseCode", 3);
                 object.put("msg", "Book is not in loan By User!");
             } else {
-
+                
                 hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:statusId1 and c.bookId=:bookId and c.userId!=:userId and c.isEnabled=1 and c.isDeleted=0  and c.isCanceled=:isCanceled ";
                 query = session.createQuery(hql);
                 query.setParameter("statusId1", new MasterLoanStatus(3));
@@ -428,7 +428,7 @@ public class DBServices {
                 query.setParameter("isCanceled", false);
                 List<BookLoanStatus> listBlsOther = query.list();
                 tx = session.beginTransaction();
-
+                
                 hql = "UPDATE BookDetails c SET c.statusId=:statusId WHERE c.bookId=:bookId";
                 query = session.createQuery(hql);
                 query.setParameter("bookId", bookId);
@@ -437,9 +437,9 @@ public class DBServices {
                 } else {
                     query.setParameter("statusId", new MasterStatus(2));
                 }
-
+                
                 query.executeUpdate();
-
+                
                 BookLoanStatus bls = listBls.get(listBls.size() - 1);
 //                    BookLoanStatus bls = new BookLoanStatus();
 //                    bls.setBookId(new BookDetails(bookId));
@@ -451,11 +451,11 @@ public class DBServices {
                 bls.setIsDeleted(false);
                 bls.setIsEnabled(true);
                 session.saveOrUpdate(bls);
-
+                
                 tx.commit();
                 object.put("responseCode", 1);
                 object.put("msg", "Book is Returned to Admin  by you successfully.");
-
+                
             }
 
 //            }
@@ -466,23 +466,23 @@ public class DBServices {
             System.out.println(ex.getMessage());
             object.put("responseCode", 0);
             object.put("msg", "Some Error Occured. Please try after some time.");
-
+            
         } finally {
             session.close();
         }
-
+        
         return object;
     }
-
+    
     private static JSONObject borrowBook(int userId, int bookId) {
         JSONObject object = new JSONObject();
         int returnData = 0;
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
         try {
-
+            
             String hql = "SELECT c FROM BookLoanStatus c where (c.loanStatusId=:statusId1 or c.loanStatusId=:statusId2) and c.bookId=:bookId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=:isCanceled ";
-
+            
             Query query = session.createQuery(hql);
             query.setParameter("statusId1", new MasterLoanStatus(1));
             query.setParameter("statusId2", new MasterLoanStatus(3));
@@ -490,13 +490,13 @@ public class DBServices {
             query.setParameter("userId", new CmnUserDetails(userId));
             query.setParameter("isCanceled", false);
             List<BookLoanStatus> listBls = query.list();
-
+            
             if (listBls.size() > 0) {
                 object.put("responseCode", 3);
                 object.put("msg", "Book is already assigned to you or requested by you");
             } else {
                 tx = session.beginTransaction();
-
+                
                 hql = "SELECT c FROM BookLoanStatus c where (c.loanStatusId=:statusId1 or c.loanStatusId=:statusId2) and c.bookId=:bookId and c.userId!=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=:isCanceled ";
                 query = session.createQuery(hql);
                 query.setParameter("statusId1", new MasterLoanStatus(1));
@@ -505,7 +505,7 @@ public class DBServices {
                 query.setParameter("userId", new CmnUserDetails(userId));
                 query.setParameter("isCanceled", false);
                 List<BookLoanStatus> listBlsOther = query.list();
-
+                
                 if (listBlsOther.isEmpty()) {
                     hql = "UPDATE BookDetails c SET c.statusId=:statusId WHERE c.bookId=:bookId";
                     query = session.createQuery(hql);
@@ -513,7 +513,7 @@ public class DBServices {
                     query.setParameter("statusId", new MasterStatus(2));
                     query.executeUpdate();
                 }
-
+                
                 BookLoanStatus bls = new BookLoanStatus();
                 bls.setBookId(new BookDetails(bookId));
                 bls.setOnCreated(new Date());
@@ -524,14 +524,14 @@ public class DBServices {
                 bls.setIsDeleted(false);
                 bls.setIsEnabled(true);
                 bls.setIsCanceled(false);
-
+                
                 session.save(bls);
                 tx.commit();
                 object.put("responseCode", 1);
                 object.put("msg", "Book is Request by you successfully Admin will approve the request");
-
+                
             }
-
+            
         } catch (Exception ex) {
             if (tx != null) {
                 tx.rollback();
@@ -539,23 +539,23 @@ public class DBServices {
             System.out.println(ex.getMessage());
             object.put("responseCode", 0);
             object.put("msg", "Some Error Occured. Please try after some time.");
-
+            
         } finally {
             session.close();
         }
-
+        
         return object;
     }
-
+    
     private static JSONObject cancelBook(int userId, int bookId) {
         JSONObject object = new JSONObject();
         int returnData = 0;
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
         try {
-
+            
             String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId and c.bookId=:bookId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=:isCanceled ";
-
+            
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(3));
 //            query.setParameter("statusId2", new MasterLoanStatus(3));
@@ -574,7 +574,7 @@ public class DBServices {
                 bls.setIsCanceled(true);
                 session.saveOrUpdate(bls);
             }
-
+            
             hql = "SELECT c FROM BookLoanStatus c where (c.loanStatusId=:loanStatusId1 or c.loanStatusId=:loanStatusId2) and c.bookId=:bookId and c.userId!=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=:isCanceled ";
             query = session.createQuery(hql);
             query.setParameter("loanStatusId1", new MasterLoanStatus(3));
@@ -589,7 +589,7 @@ public class DBServices {
                 hql = "SELECT c FROM BookDetails c where c.bookId=:bookId and c.isEnabled=1 and c.isDeleted=0";
                 query = session.createQuery(hql);
                 query.setParameter("bookId", bookId);
-
+                
                 BookDetails bd = (BookDetails) query.uniqueResult();
                 bd.setStatusId(new MasterStatus(3));
                 session.save(bd);
@@ -625,21 +625,21 @@ public class DBServices {
             System.out.println(ex.getMessage());
             object.put("responseCode", 0);
             object.put("msg", "Some Error Occured. Please try after some time.");
-
+            
         } finally {
             session.close();
         }
-
+        
         return object;
     }
-
+    
     public static JSONObject fetchAllBooksForUser(int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-            String hql = "SELECT c FROM BookDetails c where c.statusId!=:statusId and c.isEnabled=1 and c.isDeleted=0";
+            String hql = "SELECT c FROM BookDetails c where c.statusId!=:statusId and c.isEnabled=1 and c.isDeleted=0 ORDER BY c.modifiedOn desc";
             Query query = session.createQuery(hql);
             query.setParameter("statusId", new MasterStatus(1));
             List<BookDetails> listBd = query.list();
@@ -664,7 +664,7 @@ public class DBServices {
                     jsonObject.put("description", bd.getDescriptiion());
                     jsonBook.add(jsonObject);
                 }
-
+                
             }
             object.put("allAvailableBook", jsonBook);
             object.put("totalBook", jsonBook.size());
@@ -676,17 +676,17 @@ public class DBServices {
             session.close();
         }
         return object;
-
+        
     }
-
+    
     public static JSONObject fetchAllBorrowedBookByUser(int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(1));
             query.setParameter("userId", new CmnUserDetails(userId));
@@ -705,7 +705,7 @@ public class DBServices {
                 jsonObject.put("dueOn", bls.getDueDate() + "");
                 jsonBook.add(jsonObject);
             }
-
+            
             object.put("allBorrowedBook", jsonBook);
             object.put("totalBook", jsonBook.size());
             object.put("responseCode", 1);
@@ -715,18 +715,18 @@ public class DBServices {
         } finally {
             session.close();
         }
-
+        
         return object;
     }
-
+    
     public static JSONObject fetchAllRequestedBookByUser(int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(3));
             query.setParameter("userId", new CmnUserDetails(userId));
@@ -744,7 +744,7 @@ public class DBServices {
                 jsonObject.put("requestedOn", bls.getOnModified() + "");
                 jsonBook.add(jsonObject);
             }
-
+            
             object.put("allRequestedBook", jsonBook);
             object.put("totalBook", jsonBook.size());
             object.put("responseCode", 1);
@@ -756,15 +756,15 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchAllReturnedBookByUser(int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(2));
             query.setParameter("userId", new CmnUserDetails(userId));
@@ -783,7 +783,7 @@ public class DBServices {
                 jsonObject.put("createdOn", bls.getOnCreated() + "");
                 jsonBook.add(jsonObject);
             }
-
+            
             object.put("allReturnedBook", jsonBook);
             object.put("totalBook", jsonBook.size());
             object.put("responseCode", 1);
@@ -795,38 +795,38 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchDashboardStats() {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
+            
             String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(1));
             List<BookLoanStatus> listBls = query.list();
-
+            
             object.put("allBorrowedBooks", listBls.size());
-
+            
             listBls = new ArrayList<BookLoanStatus>();
-
+            
             hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0";
             query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(3));
             listBls = query.list();
-
+            
             object.put("allRequestedBook", listBls.size());
-
+            
             hql = "SELECT c FROM BookDetails c where c.isEnabled=1 and c.isDeleted=0";
             query = session.createQuery(hql);
             List<BookDetails> listBd = query.list();
-
+            
             object.put("allBooks", listBd.size());
-
+            
             object.put("responseCode", 1);
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             object.put("responseCode", 0);
@@ -835,19 +835,19 @@ public class DBServices {
         }
         return object;
     }
-
+    
     private static JSONObject fetchBorrowedBook() {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(1));
             List<BookLoanStatus> listBls = query.list();
-
+            
             JSONArray jsonBook = new JSONArray();
             for (BookLoanStatus bls : listBls) {
                 JSONObject jsonObject = new JSONObject();
@@ -863,7 +863,7 @@ public class DBServices {
                 jsonObject.put("userName", bls.getUserId().getName());
                 jsonBook.add(jsonObject);
             }
-
+            
             object.put("allTakenbookByUser", jsonBook);
             object.put("totalBook", jsonBook.size());
             object.put("responseCode", 1);
@@ -875,19 +875,19 @@ public class DBServices {
         }
         return object;
     }
-
+    
     private static JSONObject fetchRequestedBook() {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0 order c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(3));
             List<BookLoanStatus> listBls = query.list();
-
+            
             JSONArray jsonBook = new JSONArray();
             for (BookLoanStatus bls : listBls) {
                 JSONObject jsonObject = new JSONObject();
@@ -903,7 +903,7 @@ public class DBServices {
                 jsonObject.put("userName", bls.getUserId().getName());
                 jsonBook.add(jsonObject);
             }
-
+            
             object.put("allTakenbookByUser", jsonBook);
             object.put("totalBook", jsonBook.size());
             object.put("responseCode", 1);
@@ -915,16 +915,16 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchAllBorrowedBook(String searchKey) {
-
+        
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(1));
             JSONArray jsonBook = new JSONArray();
@@ -947,7 +947,7 @@ public class DBServices {
                     jsonBook.add(jsonObject);
                 }
             }
-
+            
             object.put("allBorrowedBook", jsonBook);
             object.put("totalRecord", jsonBook.size());
             object.put("responseCode", 1);
@@ -959,15 +959,15 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchAllRequestedBook(String searchKey) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(3));
             JSONArray jsonBook = new JSONArray();
@@ -985,10 +985,11 @@ public class DBServices {
                     jsonObject.put("publishedBy", bls.getBookId().getPublisherId().getPublisherName());
                     jsonObject.put("userId", bls.getUserId().getUserId());
                     jsonObject.put("userName", bls.getUserId().getName());
+                    jsonObject.put("emailId", bls.getUserId().getEmailId());
                     jsonBook.add(jsonObject);
                 }
             }
-
+            
             object.put("allRequestedBook", jsonBook);
             object.put("totalRecord", jsonBook.size());
             object.put("responseCode", 1);
@@ -1000,15 +1001,15 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchAllAuthor(String searchKey) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM AuthorDetails c where c.isEnabled=1 and c.isDeleted=0 and (c.authorName like :authorName or c.description like :description)";
+            
+            String hql = "SELECT c FROM AuthorDetails c where c.isEnabled=1 and c.isDeleted=0 and (c.authorName like :authorName or c.description like :description) order by c.modifiedOn desc";
             Query query = session.createQuery(hql);
             query.setParameter("authorName", "%" + searchKey + "%");
             query.setParameter("description", "%" + searchKey + "%");
@@ -1020,10 +1021,10 @@ public class DBServices {
                 jsonObject.put("authorName", ad.getAuthorName());
                 jsonObject.put("authorDescription", ad.getDescription());
                 jsonObject.put("modifiedOn", ad.getModifiedOn() + "");
-
+                
                 jsonBook.add(jsonObject);
             }
-
+            
             object.put("allAuthorData", jsonBook);
             object.put("totalRecord", jsonBook.size());
             object.put("responseCode", 1);
@@ -1035,15 +1036,15 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchAllPublisher(String searchKey) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM PublisherDetails c where c.isEnabled=1 and c.isDeleted=0 and (c.publisherName like :publisherName or c.description like :description) ";
+            
+            String hql = "SELECT c FROM PublisherDetails c where c.isEnabled=1 and c.isDeleted=0 and (c.publisherName like :publisherName or c.description like :description) order by c.modifiedOn desc ";
             Query query = session.createQuery(hql);
             query.setParameter("publisherName", "%" + searchKey + "%");
             query.setParameter("description", "%" + searchKey + "%");
@@ -1055,10 +1056,10 @@ public class DBServices {
                 jsonObject.put("publisherName", pd.getPublisherName());
                 jsonObject.put("publisherDescription", pd.getDescription());
                 jsonObject.put("modifiedOn", pd.getModifiedOn() + "");
-
+                
                 jsonBook.add(jsonObject);
             }
-
+            
             object.put("allPublisherData", jsonBook);
             object.put("totalRecord", jsonBook.size());
             object.put("responseCode", 1);
@@ -1070,7 +1071,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject editBookByBookId(BookDetails bd, int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -1112,7 +1113,7 @@ public class DBServices {
                 object.put("responseCode", 1);
                 object.put("msg", "Book details has been Updated");
             }
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             object.put("responseCode", 0);
@@ -1121,15 +1122,15 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchRequestedUserListByBookId(int bookId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.bookId=:bookId and c.loanStatusId=:loanStatusId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.bookId=:bookId and c.loanStatusId=:loanStatusId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("bookId", new BookDetails(bookId));
             query.setParameter("loanStatusId", new MasterLoanStatus(3));
@@ -1141,10 +1142,10 @@ public class DBServices {
                 jsonObject.put("userName", bls.getUserId().getName());
                 jsonObject.put("emailId", bls.getUserId().getEmailId());
                 jsonObject.put("requestOn", bls.getOnModified() + "");
-
+                
                 jsonUser.add(jsonObject);
             }
-
+            
             object.put("allRequestedUser", jsonUser);
             object.put("totalRecord", jsonUser.size());
             object.put("responseCode", 1);
@@ -1156,24 +1157,24 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject approveBorrowBook(int userId, int bookId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
+            
             String hql = "SELECT c FROM BookDetails c where c.bookId=:bookId and c.statusId=:statusId and c.isEnabled=1 and c.isDeleted=0";
             Query query = session.createQuery(hql);
             query.setParameter("bookId", bookId);
             query.setParameter("statusId", new MasterStatus(2));
-
+            
             BookDetails bd = (BookDetails) query.uniqueResult();
             if (bd != null) {
                 bd.setStatusId(new MasterStatus(1));
                 session.save(bd);
-
+                
                 hql = "SELECT c FROM BookLoanStatus c where c.bookId=:bookId and c.userId=:userId and c.loanStatusId=:loanStatusId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0";
                 query = session.createQuery(hql);
                 query.setParameter("bookId", new BookDetails(bookId));
@@ -1187,7 +1188,7 @@ public class DBServices {
                     bls.setOnModified(new Date());
                     session.save(bls);
                 }
-
+                
                 session.getTransaction().commit();
 //                object.put("allRequestedUser", jsonUser);
 //                object.put("totalRecord", jsonUser.size());
@@ -1206,15 +1207,15 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchReaderUserListByBookId(int bookId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.bookId=:bookId and (c.loanStatusId=:loanStatusId1 or c.loanStatusId=:loanStatusId2) and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.bookId=:bookId and (c.loanStatusId=:loanStatusId1 or c.loanStatusId=:loanStatusId2) and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("bookId", new BookDetails(bookId));
             query.setParameter("loanStatusId1", new MasterLoanStatus(2));
@@ -1227,7 +1228,7 @@ public class DBServices {
                 jsonObject.put("userName", bls.getUserId().getName());
                 jsonObject.put("emailId", bls.getUserId().getEmailId());
                 jsonObject.put("requestOn", bls.getOnModified() + "");
-
+                
                 if (bls.getLoanStatusId().getLoanStatusId() == 1) {
                     jsonObject.put("activeUser", true);
                 } else {
@@ -1235,7 +1236,7 @@ public class DBServices {
                 }
                 jsonUser.add(jsonObject);
             }
-
+            
             object.put("allReader", jsonUser);
             object.put("totalRecord", jsonUser.size());
             object.put("responseCode", 1);
@@ -1247,21 +1248,21 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchAllReturnedBook(String searchKey) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-
+            
             session.beginTransaction();
-
-            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0";
+            
+            String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:loanStatusId  and c.isEnabled=1 and c.isDeleted=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
             query.setParameter("loanStatusId", new MasterLoanStatus(2));
             JSONArray jsonBook = new JSONArray();
             List<BookLoanStatus> listBls = query.list();
             for (BookLoanStatus bls : listBls) {
-
+                
                 if (bls.getBookId().getBookTitle().toLowerCase().contains(searchKey.toLowerCase()) || bls.getUserId().getName().toLowerCase().contains(searchKey.toLowerCase()) || bls.getUserId().getEmailId().toLowerCase().contains(searchKey.toLowerCase())) {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("bookId", bls.getBookId().getBookId());
@@ -1278,7 +1279,7 @@ public class DBServices {
                     jsonBook.add(jsonObject);
                 }
             }
-
+            
             object.put("allReturnedBook", jsonBook);
             object.put("totalRecord", jsonBook.size());
             object.put("responseCode", 1);
@@ -1290,7 +1291,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject editPublisherByPublishId(PublisherDetails pd, int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -1306,7 +1307,7 @@ public class DBServices {
                 pdResult.setUserId(new CmnUserDetails(userId));
                 pdResult.setIsEnabled(true);
                 pdResult.setIsDeleted(false);
-
+                
                 session.saveOrUpdate(pdResult);
                 session.getTransaction().commit();
                 object.put("responseCode", 1);
@@ -1323,13 +1324,13 @@ public class DBServices {
                 pdResult.setUserId(new CmnUserDetails(userId));
                 pdResult.setIsEnabled(true);
                 pdResult.setIsDeleted(false);
-
+                
                 session.saveOrUpdate(pdResult);
                 session.getTransaction().commit();
                 object.put("responseCode", 1);
                 object.put("msg", "Publisher details has been Updated");
             }
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             session.getTransaction().rollback();
@@ -1339,7 +1340,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject disabledPublisher(int publisherId, int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -1353,7 +1354,7 @@ public class DBServices {
                 object.put("responseCode", 3);
                 object.put("msg", "Publisher is not valid");
             } else {
-
+                
                 hql = "SELECT c FROM BookDetails c where c.publisherId=:publisherId and c.isEnabled=1 and c.isDeleted=0";
                 query = session.createQuery(hql);
                 query.setParameter("publisherId", new PublisherDetails(publisherId));
@@ -1373,11 +1374,11 @@ public class DBServices {
                 pdResult.setIsDeleted(true);
                 session.update(pdResult);
             }
-
+            
             session.getTransaction().commit();
             object.put("responseCode", 1);
             object.put("msg", "Publisher is disabled");
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             session.getTransaction().rollback();
@@ -1387,7 +1388,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject editAuthorByAuthorId(AuthorDetails ad, int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -1403,7 +1404,7 @@ public class DBServices {
                 adResult.setUserId(new CmnUserDetails(userId));
                 adResult.setIsEnabled(true);
                 adResult.setIsDeleted(false);
-
+                
                 session.saveOrUpdate(adResult);
                 session.getTransaction().commit();
                 object.put("responseCode", 1);
@@ -1421,13 +1422,13 @@ public class DBServices {
                 adResult.setUserId(new CmnUserDetails(userId));
                 adResult.setIsEnabled(true);
                 adResult.setIsDeleted(false);
-
+                
                 session.saveOrUpdate(adResult);
                 session.getTransaction().commit();
                 object.put("responseCode", 1);
                 object.put("msg", "Author details has been Updated");
             }
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             session.getTransaction().rollback();
@@ -1437,7 +1438,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject disabledAuthor(int authorId, int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -1451,7 +1452,7 @@ public class DBServices {
                 object.put("responseCode", 3);
                 object.put("msg", "Author is not valid");
             } else {
-
+                
                 hql = "SELECT c FROM BookDetails c where c.authorId=:authorId and c.isEnabled=1 and c.isDeleted=0";
                 query = session.createQuery(hql);
                 query.setParameter("authorId", new AuthorDetails(authorId));
@@ -1471,11 +1472,11 @@ public class DBServices {
                 adResult.setIsDeleted(true);
                 session.update(adResult);
             }
-
+            
             session.getTransaction().commit();
             object.put("responseCode", 1);
             object.put("msg", "Author is disabled");
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             session.getTransaction().rollback();
@@ -1485,14 +1486,14 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject fetchUserList(String searchKey) {
-
+        
         JSONObject jsonreturn = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            String hql = "SELECT c FROM CmnUserDetails c where c.roleId!=:roleId and c.isEnabled=1 and c.isDeleted=0 and (c.name like :name or c.emailId like :emailId)";
+            String hql = "SELECT c FROM CmnUserDetails c where c.roleId!=:roleId and c.isEnabled=1 and c.isDeleted=0 and (c.name like :name or c.emailId like :emailId) order by c.modifiedOn desc";
             Query query = session.createQuery(hql);
             query.setParameter("name", "%" + searchKey + "%");
             query.setParameter("emailId", "%" + searchKey + "%");
@@ -1504,45 +1505,43 @@ public class DBServices {
                 jsonObject.put("userId", cud.getUserId());
                 jsonObject.put("name", cud.getName());
                 jsonObject.put("emailId", cud.getEmailId());
-
+                
                 jsonArray.add(jsonObject);
             }
 //          
             jsonreturn.put("allUserList", jsonArray);
             jsonreturn.put("totalRecord", jsonArray.size());
             jsonreturn.put("responseCode", 1);
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             jsonreturn.put("responseCode", 0);
         } finally {
             session.close();
         }
-
+        
         return jsonreturn;
     }
-
+    
     public static JSONObject editUserByUserId(String userId, String userName, String email) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             PublisherDetails pdResult = new PublisherDetails();
             session.beginTransaction();
-            String hql = "SELECT c FROM CmnUserDetails c where c.emailId!=:emailId";
+            String hql = "SELECT c FROM CmnUserDetails c where c.emailId=:emailId";
             Query query = session.createQuery(hql);
             query.setParameter("emailId", email);
             List<CmnUserDetails> listCud = query.list();
-
+            
             if (!listCud.isEmpty()) {
                 object.put("responseCode", 3);
-                object.put("msg", "EmailId Already exist");
+                object.put("msg", "EmailId already exist");
             } else {
                 CmnUserDetails cud = new CmnUserDetails();
                 cud.setName(userName);
                 cud.setEmailId(email);
-                cud.setPassword(CommonUtil.plainToHashPassword("LB@2021"));
-                cud.setName(email);
-                cud.setName(email);
+                cud.setPassword(CommonUtil.plainToHashPassword(new CommonUtil().getPropertySec("defaultPassword")));
                 cud.setIsEnabled(true);
                 cud.setIsDeleted(false);
                 cud.setRoleId(new MasterRole(1));
@@ -1551,7 +1550,7 @@ public class DBServices {
                 object.put("responseCode", 1);
                 object.put("msg", "User added");
             }
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             session.getTransaction().rollback();
@@ -1561,7 +1560,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject disabledUser(int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -1575,16 +1574,16 @@ public class DBServices {
                 object.put("responseCode", 3);
                 object.put("msg", "User is not valid");
             } else {
-
+                
                 cud.setIsDeleted(true);
                 cud.setModifiedOn(new Date());
                 session.save(cud);
             }
-
+            
             session.getTransaction().commit();
             object.put("responseCode", 1);
             object.put("msg", "User is disabled");
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             session.getTransaction().rollback();
@@ -1594,7 +1593,7 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject resetPassword(int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -1608,15 +1607,15 @@ public class DBServices {
                 object.put("responseCode", 3);
                 object.put("msg", "User is not valid");
             } else {
-                cud.setPassword(CommonUtil.plainToHashPassword("LB@2021"));
+                cud.setPassword(CommonUtil.plainToHashPassword(new CommonUtil().getPropertySec("defaultPassword")));
                 cud.setModifiedOn(new Date());
                 session.save(cud);
             }
-
+            
             session.getTransaction().commit();
             object.put("responseCode", 1);
             object.put("msg", "Passwrod is reset");
-
+            
         } catch (Exception ex) {
             System.out.println(ex);
             session.getTransaction().rollback();
@@ -1626,44 +1625,44 @@ public class DBServices {
         }
         return object;
     }
-
+    
     public static JSONObject renewBook(int userId, int bookId) {
-
+        
         JSONObject object = new JSONObject();
         int returnData = 0;
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
         try {
-
+            
             String hql = "SELECT c FROM BookLoanStatus c where c.loanStatusId=:statusId and c.bookId=:bookId and c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=:isCanceled ";
-
+            
             Query query = session.createQuery(hql);
             query.setParameter("statusId", new MasterLoanStatus(1));
             query.setParameter("bookId", new BookDetails(bookId));
             query.setParameter("userId", new CmnUserDetails(userId));
             query.setParameter("isCanceled", false);
             List<BookLoanStatus> listBls = query.list();
-
+            
             if (listBls.isEmpty()) {
                 object.put("responseCode", 3);
                 object.put("msg", "Book is returned to Library already");
             } else {
                 tx = session.beginTransaction();
-
+                
                 BookLoanStatus bls = listBls.get(listBls.size() - 1);
                 if (bls.getDueDate().after(new Date())) {
                     bls.setDueDate(updateDateObject(bls.getDueDate(), 7));
                 } else {
                     bls.setDueDate(updateDateObject(new Date(), 7));
                 }
-
+                
                 session.save(bls);
                 tx.commit();
                 object.put("responseCode", 1);
                 object.put("msg", "Book is renewd by you successfully");
-
+                
             }
-
+            
         } catch (Exception ex) {
             if (tx != null) {
                 tx.rollback();
@@ -1671,17 +1670,17 @@ public class DBServices {
             System.out.println(ex.getMessage());
             object.put("responseCode", 0);
             object.put("msg", "Some Error Occured. Please try after some time.");
-
+            
         } finally {
             session.close();
         }
-
+        
         return object;
-
+        
     }
-
+    
     public static JSONObject renewOrUpdateBook(int userId, int bookId, int operation) {
-
+        
         if (operation == 1) {
             return returnBook(userId, bookId);
         } else if (operation == 2) {
@@ -1692,15 +1691,15 @@ public class DBServices {
             object.put("msg", "Some Error Occured");
             return object;
         }
-
+        
     }
-
+    
     public static JSONObject disabledBook(int bookId, int userId) {
         JSONObject object = new JSONObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-
+            
             String hql = "SELECT c FROM BookDetails c where c.bookId=:bookId and c.isEnabled=1 and c.isDeleted=0";
             Query query = session.createQuery(hql);
             query.setParameter("bookId", bookId);
@@ -1729,5 +1728,43 @@ public class DBServices {
         }
         return object;
     }
-
+    
+    public static JSONObject registerUser(CmnUserDetails cmnuserdetails) {
+        JSONObject object = new JSONObject();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            PublisherDetails pdResult = new PublisherDetails();
+            session.beginTransaction();
+            String hql = "SELECT c FROM CmnUserDetails c where c.emailId=:emailId";
+            Query query = session.createQuery(hql);
+            query.setParameter("emailId", cmnuserdetails.getEmailId());
+            List<CmnUserDetails> listCud = query.list();
+            
+            if (!listCud.isEmpty()) {
+                object.put("responseCode", 3);
+                object.put("msg", "EmailId already exist, Please use different email id.");
+            } else {
+                CmnUserDetails cud = new CmnUserDetails();
+                cud.setName(cmnuserdetails.getEmailId());
+                cud.setEmailId(cmnuserdetails.getEmailId());
+                cud.setPassword(CommonUtil.plainToHashPassword(cmnuserdetails.getPassword()));
+                cud.setIsEnabled(true);
+                cud.setIsDeleted(false);
+                cud.setRoleId(new MasterRole(1));
+                session.save(cud);
+                session.getTransaction().commit();
+                object.put("responseCode", 1);
+                object.put("msg", "SignUp Successfully, Please login now.");
+            }
+            
+        } catch (Exception ex) {
+            System.out.println(ex);
+            session.getTransaction().rollback();
+            object.put("responseCode", 0);
+        } finally {
+            session.close();
+        }
+        return object;
+    }
+    
 }
