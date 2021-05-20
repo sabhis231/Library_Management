@@ -33,8 +33,9 @@ public class DBServices {
     
     public static CmnUserDetails doauth(CmnUserDetails cud) {
         CmnUserDetails returnCud = null;
+         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Session session = HibernateUtil.getSessionFactory().openSession();
+           
             session.beginTransaction();
             String hql = "SELECT c FROM CmnUserDetails c where c.emailId=:emailId and c.isEnabled=1 and c.isDeleted=0";
             Query query = session.createQuery(hql);
@@ -50,6 +51,8 @@ public class DBServices {
         } catch (Exception ex) {
             System.out.println(ex);
             return null;
+        } finally{
+             session.close();
         }
         
         return returnCud;
@@ -57,8 +60,9 @@ public class DBServices {
     
     public static JSONObject fetchMappedBook(int userId) {
         JSONObject object = new JSONObject();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Session session = HibernateUtil.getSessionFactory().openSession();
+           
             session.beginTransaction();
             String hql = "SELECT c FROM BookLoanStatus c where c.userId=:userId and c.isEnabled=1 and c.isDeleted=0 and c.isCanceled=0 order by c.onModified desc";
             Query query = session.createQuery(hql);
@@ -124,6 +128,8 @@ public class DBServices {
         } catch (Exception ex) {
             System.out.println(ex);
             object.put("responseCode", 0);
+        } finally {
+            session.close();
         }
         return object;
     }
@@ -208,8 +214,9 @@ public class DBServices {
     
     public static JSONObject fetchRequestedBookByUserId(int userId) {
         JSONObject object = new JSONObject();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Session session = HibernateUtil.getSessionFactory().openSession();
+            
             session.beginTransaction();
             String hql = "SELECT c FROM BookLoanStatus c where c.userId=:userId c.isEnabled=1 and c.isDeleted=0 and c.loanStatusId=:loanStatusId";
             Query query = session.createQuery(hql);
@@ -246,14 +253,17 @@ public class DBServices {
         } catch (Exception ex) {
             System.out.println(ex);
             object.put("responseCode", 0);
+        } finally{
+            session.close();
         }
         return object;
     }
     
     public static JSONObject fetchUserProfile(int userId) {
         JSONObject object = new JSONObject();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Session session = HibernateUtil.getSessionFactory().openSession();
+           
             session.beginTransaction();
             String hql = "SELECT c FROM CmnUserDetails c where c.userId=:userId and c.isEnabled=1 and c.isDeleted=0";
             Query query = session.createQuery(hql);
@@ -278,6 +288,8 @@ public class DBServices {
         } catch (Exception ex) {
             System.out.println(ex);
             object.put("responseCode", 0);
+        } finally {
+            session.close();
         }
         
         return object;
@@ -285,8 +297,8 @@ public class DBServices {
     
     public static CmnUserDetails updateProfile(CmnUserDetails cud, int userId) {
         CmnUserDetails returnCud = null;
-        try {
-            Session session = HibernateUtil.getSessionFactory().openSession();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            
             session.beginTransaction();
             String hql = "SELECT c FROM CmnUserDetails c where c.userId=:userId and c.isEnabled=1 and c.isDeleted=0";
             Query query = session.createQuery(hql);
