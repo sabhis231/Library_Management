@@ -38,7 +38,7 @@ $(function () {
             success: function (result) {
                 $("#hideModel").click();
                 if (result.responseCode == 1) {
-                    fetchAllBooks();
+                    __mainFunction();
                     templateNotification(result.msg, 'info');
 
                 } else
@@ -133,7 +133,6 @@ var fetchAllPublisher = function () {
             console.log(result);
             if (result.responseCode == 1) {
                 publisherList = [...result.allPublisherData];
-                console.log(publisherList);
                 renderData(publisherList);
             } else
                 errorElsePart();

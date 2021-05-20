@@ -29,7 +29,7 @@ $(function () {
 
     __mainFunction();
     fetchOtherCall();
-    fetchDashboardStats();
+//    fetchDashboardStats();
 
 
     $(".current-date").html(currentDateObject);
@@ -387,6 +387,7 @@ var __mainFunction = function () {
     fetchAllBooks();
     borrowedAllBooks();
     requestAllBook();
+    fetchDashboardStats();
 };
 
 $('.user-search').keyup(debounce(function () {
