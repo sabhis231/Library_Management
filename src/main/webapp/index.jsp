@@ -148,8 +148,8 @@
             </div>
         </div>
     </body>
-    <script src="Assets/plugins/jquery/jquery.min.js" type="text/javascript"></script>
-    <script src="Assets/plugins/notifyjs/notify.js" type="text/javascript"></script>
-    <script src="Assets/js/login.js" type="text/javascript"></script>
-    <!--<script src="Assets/js/main.js" type="text/javascript"></script>-->
+    
+    <script src="${contextPath}/Assets/plugins/new-material-theme/js/core/jquery.min.js"></script>
+    <script src="${contextPath}/Assets/plugins/notifyjs/notify.js" type="text/javascript"></script>
+    <script src="${contextPath}/Assets/js/login.js" type="text/javascript"></script>
 </html>

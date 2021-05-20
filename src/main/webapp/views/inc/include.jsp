@@ -8,7 +8,7 @@
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
 <!--Javascript-->
-<script src="${contextPath}/Assets/plugins/jquery/jquery.min.js" type="text/javascript"></script>
+<script src="${contextPath}/Assets/plugins/new-material-theme/js/core/jquery.min.js"></script>
 <!--NOtify-->
 <script src="${contextPath}/Assets/plugins/notifyjs/notify.js" type="text/javascript"></script>
 
@@ -20,7 +20,7 @@
 <link href="${contextPath}/Assets/plugins/new-material-theme/demo/demo.css" rel="stylesheet" />
 
 <!--   Core JS Files   -->
-<script src="${contextPath}/Assets/plugins/new-material-theme/js/core/jquery.min.js"></script>
+
 <script src="${contextPath}/Assets/plugins/new-material-theme/js/core/popper.min.js"></script>
 <script src="${contextPath}/Assets/plugins/new-material-theme/js/core/bootstrap-material-design.min.js"></script>
 <script src="https://unpkg.com/default-passive-events"></script>
@@ -32,4 +32,3 @@
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 <script src="${contextPath}/Assets/plugins/new-material-theme/demo/demo.js"></script>
 
-<script src="${contextPath}/Assets/css/global-style.css?v1"></script>
